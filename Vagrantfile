@@ -15,8 +15,7 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
 
   config.ssh.forward_x11 = true 
-  config.ssh.forward_agent = true 
-
+  config.ssh.forward_agent = true
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -41,7 +40,8 @@ Vagrant.configure(2) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
+    # need absolute paths, so the answer here is to leverage the environment variable
+  config.vm.synced_folder ENV['HOME']+"/Dropbox", "/home/vagrant/Dropbox"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -100,7 +100,7 @@ SHELL
     vim +PluginInstall +qall
 
     git config --global user.name "Alexander O'Connor"
-    git config --global user.email "AlexO.Connor@scss.tcd.ie"
+    git config --global user.email "Alex.OConnor@scss.tcd.ie"
 
 
 SHELL
