@@ -78,11 +78,8 @@ Vagrant.configure(2) do |config|
 
     apt-get update 
     apt-get dist-upgrade -y
-    apt-get install -y nodejs npm 
-    update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
-    npm install -g express bower 
     
-    apt-get install -y vim-gnome git wget 
+    apt-get install -y vim-gnome git wget pandoc build-essential
     
 SHELL
 
