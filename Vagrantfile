@@ -74,6 +74,7 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get update
   #   sudo apt-get install -y apache2
   # SHELL
+  # With Root
   config.vm.provision "shell", inline: <<-SHELL 
 
     apt-get update 
@@ -82,23 +83,24 @@ Vagrant.configure(2) do |config|
     update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
     npm install -g express bower 
     
-    apt-get install -y vim-gnome git wget 
+    apt-get install -y vim-gnome git wget pandoc
     
 SHELL
 
-# make user-mode configuration changes
+  # make user-mode configuration changes
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
     git clone --recursive https://github.com/powerline/fonts/
     fonts/install.sh &
     fc-cache -v -f
 
-    git clone --recursive https://github.com/uberalex/dotvim
-    mv dotvim .vim
+    git clone --recursive https://github.com/uberalex/dotvim .vim
     ln -s .vim/vimrc ~/.gvimrc
     ln -s .vim/vimrc ~/.vimrc
 
-    vim +PluginInstall +qall
-
+    #install vim plugins silently
+    echo "Installing Vim Plugins"
+    vim +BundleInstall +qall 2&> /dev/null
+    echo "Vim Bundled"
     git config --global user.name "Alexander O'Connor"
     git config --global user.email "Alex.OConnor@scss.tcd.ie"
 
