@@ -25,7 +25,8 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-    config.vm.network "forwarded_port", guest: 3000, host: 3000
+  # iPython Notebooks, remember alias for ip = *
+    config.vm.network "forwarded_port", guest: 8888, host: 8888
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -79,9 +80,9 @@ Vagrant.configure(2) do |config|
     apt-get update 
     apt-get dist-upgrade -y
     
-    apt-get install -y vim-gnome git wget pandoc
+    apt-get install -y vim-gnome git wget pandoc tmux
 
-    apt-get install -y python-pip 
+    apt-get install -y python-dev python-pip 
 
     pip install ipython[all]
     pip install requests beautifulsoup4 nltk docopt lettuce
@@ -99,11 +100,17 @@ SHELL
     ln -s .vim/vimrc ~/.gvimrc
     ln -s .vim/vimrc ~/.vimrc
 
-    vim +PluginInstall +qall
+    echo "Bundling Vim"
+    vim +BundleInstall +qall &2> /dev/null
+    echo "Vim Bundle Completed"
 
     git config --global user.name "Alexander O'Connor"
     git config --global user.email "Alex.OConnor@scss.tcd.ie"
 
+    cp /vagrant/bash_aliases ~/.bash_aliases
+    source ~/.bash_aliases
 
+    #link nltk data
+    ln -s Dropbox/Source/python/nltk_data ~/nltk_data
 SHELL
 end
