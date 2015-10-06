@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu/vivid64"
 
   config.ssh.forward_x11 = true 
   config.ssh.forward_agent = true
@@ -54,7 +54,7 @@ Vagrant.configure(2) do |config|
   #   # Customize the amount of memory on the VM:
      vb.memory = "4096"
       # set the number of cpus
-     vb.cpus = "4"
+     vb.cpus = "2"
   end
   #
   # View the documentation for the provider you are using for more
@@ -76,10 +76,13 @@ Vagrant.configure(2) do |config|
   # SHELL
   config.vm.provision "shell", inline: <<-SHELL 
 
+    echo "deb http://archive.ubuntu.com/ubuntu/ vivid universe" | sudo tee -a "/etc/apt/sources.list"
+    echo "deb http://archive.ubuntu.com/ubuntu/ vivid multiverse" | sudo tee -a "/etc/apt/sources.list"
+
     apt-get update 
     apt-get dist-upgrade -y
     
-    apt-get install -y vim-gnome git wget pandoc build-essential
+    apt-get install -y vim-gnome git wget pandoc build-essential python python-dev python-pip 
     
 SHELL
 
@@ -97,7 +100,7 @@ SHELL
     vim +PluginInstall +qall
 
     git config --global user.name "Alexander O'Connor"
-    git config --global user.email "Alex.OConnor@scss.tcd.ie"
+    git config --global user.email "dralexoconnor@gmail.com"
 
 
 SHELL
