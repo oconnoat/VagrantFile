@@ -14,7 +14,7 @@ Vagrant.configure(2) do |config|
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ubuntu/vivid64"
 
-  config.ssh.forward_x11 = true 
+  config.ssh.forward_x11 = true
   config.ssh.forward_agent = true
 
   # Disable automatic box update checking. If you disable this, then
@@ -26,6 +26,7 @@ Vagrant.configure(2) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
     config.vm.network "forwarded_port", guest: 3000, host: 3000
+    config.vm.network "forwarded_port", guest: 5000, host: 5000
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -42,6 +43,7 @@ Vagrant.configure(2) do |config|
   # argument is a set of non-required options.
     # need absolute paths, so the answer here is to leverage the environment variable
   config.vm.synced_folder ENV['HOME']+"/Dropbox", "/home/vagrant/Dropbox"
+  config.vm.synced_folder ENV['HOME']+"/Google Drive", "/home/vagrant/Google Drive"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -52,7 +54,7 @@ Vagrant.configure(2) do |config|
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-     vb.memory = "4096"
+     vb.memory = "8192"
       # set the number of cpus
      vb.cpus = "2"
   end
@@ -74,20 +76,30 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get update
   #   sudo apt-get install -y apache2
   # SHELL
-  config.vm.provision "shell", inline: <<-SHELL 
+  config.vm.provision "shell", inline: <<-SHELL
 
     echo "deb http://archive.ubuntu.com/ubuntu/ vivid universe" | sudo tee -a "/etc/apt/sources.list"
     echo "deb http://archive.ubuntu.com/ubuntu/ vivid multiverse" | sudo tee -a "/etc/apt/sources.list"
 
-    apt-get update 
+    apt-get update
     apt-get dist-upgrade -y
-    
-    apt-get install -y vim-gnome git wget pandoc build-essential python python-dev python-pip 
-    
+
+    apt-get install -y vim-gnome git wget curl pandoc build-essential python python-dev
+
+    easy_install pip
+    pip install -U pip setuptools
+    pip install -U virtualenv virtualenvwrapper
+
+    curl --silent --location https://deb.nodesource.com/setup_4.x | bash -
+    apt-get install -y nodejs
+
+    npm install -g bower
+
 SHELL
 
 # make user-mode configuration changes
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
+
     git clone --recursive https://github.com/powerline/fonts/
     fonts/install.sh &
     fc-cache -v -f
@@ -99,9 +111,6 @@ SHELL
 
     vim +PluginInstall +qall
 
-    git config --global user.name "Alexander O'Connor"
-    git config --global user.email "dralexoconnor@gmail.com"
-
-
+    echo "\n\n source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
 SHELL
 end

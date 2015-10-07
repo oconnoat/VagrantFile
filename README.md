@@ -1,2 +1,10 @@
 #Vagrant file
-default (OSX) vagrant file including node, npm, vim (and my plugins) and X. Uses the virtualbox provider.
+Default Vagrant file including:
+
+* node, npm [nodesource version]
+* gvim (and my plugins with vundle.vim)
+* python, virtualenvwrapper
+
+Exposes ports 3000, 5000 for node and flask
+
+Uses the virtualbox provider.
