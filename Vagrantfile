@@ -111,6 +111,9 @@ SHELL
 
     vim +PluginInstall +qall
 
+    mkdir -p /home/vagrant/.virtualenvs
+
+    echo "\n\n export WORKON_HOME=/home/vagrant/.virtualenvs"
     echo "\n\n source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
 SHELL
 end
