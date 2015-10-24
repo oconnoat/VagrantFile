@@ -27,6 +27,8 @@ Vagrant.configure(2) do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
     config.vm.network "forwarded_port", guest: 3000, host: 3000
     config.vm.network "forwarded_port", guest: 5000, host: 5000
+    config.vm.network "forwarded_port", guest: 8000, host: 8000
+    config.vm.network "forwarded_port", guest: 8888, host: 8888
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -43,7 +45,7 @@ Vagrant.configure(2) do |config|
   # argument is a set of non-required options.
     # need absolute paths, so the answer here is to leverage the environment variable
   config.vm.synced_folder ENV['HOME']+"/Dropbox", "/home/vagrant/Dropbox"
-  config.vm.synced_folder ENV['HOME']+"/Google Drive", "/home/vagrant/Google Drive"
+  config.vm.synced_folder ENV['HOME']+"/Google Drive", "/home/vagrant/GoogleDrive"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -78,17 +80,18 @@ Vagrant.configure(2) do |config|
   # SHELL
   config.vm.provision "shell", inline: <<-SHELL
 
-    echo "deb http://archive.ubuntu.com/ubuntu/ vivid universe" | sudo tee -a "/etc/apt/sources.list"
-    echo "deb http://archive.ubuntu.com/ubuntu/ vivid multiverse" | sudo tee -a "/etc/apt/sources.list"
-
     apt-get update
     apt-get dist-upgrade -y
 
-    apt-get install -y vim-gnome git wget curl pandoc build-essential python python-dev
+    apt-get install -y git wget curl pandoc build-essential vim-gnome python python-dev python-setuptools 
+    apt-get install -y gfortran libopenblas-dev liblapack-dev
+    apt-get install -y libncurses5-dev pkg-config libfreetype6-dev libpng12-dev
 
     easy_install pip
-    pip install -U pip setuptools
+    pip install -U pip setuptools cython
     pip install -U virtualenv virtualenvwrapper
+    pip install -U numpy pandas scipy nose sympy scikit-learn gensim nltk
+    pip install -U ipython[all] ipywidgets matplotlib
 
     curl --silent --location https://deb.nodesource.com/setup_4.x | bash -
     apt-get install -y nodejs
@@ -113,7 +116,9 @@ SHELL
 
     mkdir -p /home/vagrant/.virtualenvs
 
-    echo "\n\n export WORKON_HOME=/home/vagrant/.virtualenvs"
+    echo "\n\n export WORKON_HOME=/home/vagrant/.virtualenvs" >> ~/.bashrc
     echo "\n\n source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
+    echo "\n\n alias ipython='ipython notebook --no-browser --ip=0.0.0.0 --port=8888'" >> ~/.bashrc
+
 SHELL
 end
