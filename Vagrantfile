@@ -107,14 +107,13 @@ SHELL
     fonts/install.sh &
     fc-cache -v -f
 
-    git clone --recursive https://github.com/uberalex/dotvim
-    mv dotvim .vim
+    git clone --recursive https://github.com/uberalex/dotvim .vim
     ln -s .vim/vimrc ~/.gvimrc
     ln -s .vim/vimrc ~/.vimrc
 
     vim +PluginInstall +qall
 
-    mkdir -p /home/vagrant/.virtualenvs
+    mkdir -p ~/.virtualenvs
 
     echo "\n\n export WORKON_HOME=/home/vagrant/.virtualenvs" >> ~/.bashrc
     echo "\n\n source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
