@@ -59,6 +59,10 @@ Vagrant.configure(2) do |config|
      vb.memory = "8192"
       # set the number of cpus
      vb.cpus = "2"
+      # Enable usb (for opencv)
+     vb.customize ["modifyvm", :id, "--usb", "on"]
+     vb.customize ["modifyvm", :id, "--usbehci", "on"]
+
   end
   #
   # View the documentation for the provider you are using for more
