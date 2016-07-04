@@ -28,6 +28,7 @@ Vagrant.configure(2) do |config|
     config.vm.network "forwarded_port", guest: 3000, host: 3000
     config.vm.network "forwarded_port", guest: 5000, host: 5000
     config.vm.network "forwarded_port", guest: 8000, host: 8000
+    config.vm.network "forwarded_port", guest: 8080, host: 8080
     config.vm.network "forwarded_port", guest: 8888, host: 8888
 
   # Create a private network, which allows host-only access to the machine
@@ -44,9 +45,11 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
     # need absolute paths, so the answer here is to leverage the environment variable
-  config.vm.synced_folder ENV['HOME']+"/Dropbox", "/home/vagrant/Dropbox"
-  config.vm.synced_folder ENV['HOME']+"/Google Drive", "/home/vagrant/GoogleDrive"
+    dropbox_dir = File.join ENV['HOME'], '/Dropbox'
+    drive_dir   = File.join ENV['HOME'], '/Google Drive'
 
+ config.vm.synced_folder dropbox_dir, '/home/vagrant/Dropbox'     if File.exists?(dropbox_dir)
+    config.vm.synced_folder drive_dir,   '/home/vagrant/GoogleDrive' if File.exists?(drive_dir)
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
@@ -95,12 +98,28 @@ Vagrant.configure(2) do |config|
     pip install -U pip setuptools cython
     pip install -U virtualenv virtualenvwrapper
     pip install -U numpy pandas scipy nose sympy scikit-learn gensim nltk
-    pip install -U ipython[all] ipywidgets matplotlib
+    pip install -U jupyter matplotlib sealab
 
-    curl --silent --location https://deb.nodesource.com/setup_4.x | bash -
+    curl --silent --location https://deb.nodesource.com/setup_6.x | bash -
     apt-get install -y nodejs
 
     npm install -g bower
+
+    # core nlp requires java 8
+    apt-get -y -q install software-properties-common htop maven
+    add-apt-repository ppa:webupd8team/java
+    apt-get -y -q update
+    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+    apt-get -y -q install oracle-java8-installer > /dev/null 2>&1
+    update-java-alternatives -s java-8-oracle
+
+    wget http://www.eu.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz
+    tar -zxf apache-maven-3.3.3-bin.tar.gz -C /usr/local/
+    ln -s /usr/local/apache-maven-3.3.3/bin/mvn /usr/local/bin/mvn
+
+    apt-get autoremove -q -y
+
+
 
 SHELL
 
@@ -119,9 +138,11 @@ SHELL
 
     mkdir -p ~/.virtualenvs
 
-    echo "\n\n export WORKON_HOME=/home/vagrant/.virtualenvs" >> ~/.bashrc
+    echo "\n\n export WORKON_HOME=$HOME/.virtualenvs" >> ~/.bashrc
     echo "\n\n source /usr/local/bin/virtualenvwrapper.sh" >> ~/.bashrc
     echo "\n\n alias ipython='ipython notebook --no-browser --ip=0.0.0.0 --port=8888'" >> ~/.bashrc
+
+    echo "\n\n export JAVA_HOME=/usr/lib/jvm/java-7-oracle/jre/" >> ~/.bashrc
 
 SHELL
 end
